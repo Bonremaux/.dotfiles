@@ -6,44 +6,38 @@ import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog
 import XMonad.Util.Run (spawnPipe)
 import System.IO
+import XMonad.Hooks.ManageHelpers
 
-myWorkspaces = ["1:main", "2:web", "3:chat"] ++ map show [4..9]
+myWorkspaces = ["1:term", "2:web", "3:code", "4:chat"] ++ map show [5..9]
 
 myManageHook = composeAll
-    [ className =? "Firefox" --> doShift "2:web"
-    , className =? "Pidgin" --> doShift "3:chat"
-    , resource  =? "desktop_window" --> doIgnore]
+    [ className =? "Pidgin" --> doShift "4:chat"
+    , resource  =? "desktop_window" --> doIgnore
+    , isFullscreen --> doFullFloat]
 
-myLayout = avoidStruts tiled ||| Full
-  where
-     -- default tiling algorithm partitions the screen into two panes
-     tiled   = Tall nmaster delta ratio
+myLayout = smartBorders (avoidStruts tiled ||| Mirror tiled ||| Full)
+           where tiled = Tall 1 (3/100) (5/9)
 
-     -- The default number of windows in the master pane
-     nmaster = 1
-
-     -- Default proportion of screen occupied by master pane
-     ratio   = 0.6
-
-     -- Percent of screen to increment by when resizing panes
-     delta   = 3/100
+modm = mod4Mask
 
 main = do
     xmproc <- spawnPipe "xmobar ~/.xmonad/xmobarrc.hs"
     xmonad $ defaultConfig {
         workspaces         = myWorkspaces,
-        terminal           = "termite",
-        focusFollowsMouse  = False,
+        terminal           = "urxvt",
+        focusFollowsMouse  = True,
+        clickJustFocuses   = False,
         normalBorderColor  = "#000000",
-        focusedBorderColor = "#dd0000",
-        borderWidth        = 2,
+        focusedBorderColor = "#ee9a00",
+        modMask            = modm,
 
         logHook            = dynamicLogWithPP xmobarPP
                                 { ppOutput = hPutStrLn xmproc },
 
         manageHook         = myManageHook <+> manageDocks,
-        layoutHook         = smartBorders $ myLayout
+        layoutHook         = myLayout
     } `additionalKeys`
         [ ((controlMask, xK_Print), spawn "sleep 0.2; scrot -s")
+
         , ((0, xK_Print), spawn "scrot")
         ]

@@ -4,10 +4,8 @@ filetype off
 set rtp+=~/.vim/bundle/vundle/
 call vundle#rc()
 
-" =============================
-"             PLUGINS
-" =============================
-
+" PLUGINS
+" -----------------------------
 Bundle 'gmarik/vundle'
 Bundle 'altercation/vim-colors-solarized'
 Bundle 'Valloric/YouCompleteMe'
@@ -19,13 +17,13 @@ Bundle 'Shougo/neomru.vim'
 Bundle 'Shougo/vimfiler.vim'
 Bundle 'bling/vim-airline'
 Bundle 'osyo-manga/vim-over'
+Bundle 'eagletmt/ghcmod-vim'
+Bundle 'drmikehenry/vim-headerguard'
 
 filetype plugin indent on
 
-" =============================
-"             SETTINGS
-" =============================
-
+" SETTINGS
+" -----------------------------
 set mouse=a
 set mousehide
 
@@ -50,7 +48,6 @@ set textwidth=80
 set colorcolumn=81
 
 set noshowmatch
-
 set showcmd
 
 set encoding=utf-8
@@ -69,34 +66,26 @@ set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
 set so=7
 
 set ruler
-
 set colorcolumn=80
-
 set virtualedit=onemore
-
 set cursorline
-
 set fillchars+=vert:│
-
 set wildmenu
 set wildmode=list:longest,full
-
 set ls=2
-
-set clipboard=unnamedplus
-
 set autoread
-
 set number
+set clipboard=unnamedplus
 
 au BufNewFile,BufRead *.cl set filetype=c
 au BufNewFile,BufRead *.cu set filetype=cpp
 au BufNewFile,BufRead *.cuh set filetype=cpp
 
-" =============================
-"             MAPPING
-" =============================
+au FileType c,cpp imap #i #include
+au FileType c,cpp imap #d #define
 
+" MAPPING
+" -----------------------------
 let mapleader=','
 
 nmap <C-j> <C-W>j
@@ -116,11 +105,6 @@ inoremap kj <esc>
 
 nnoremap U <C-r>
 
-vnoremap < <gv
-vnoremap > >gv
-
-vnoremap <c-y> "+y
-
 nmap <leader>, :b#<CR>
 
 nmap <leader>e :set number!<CR>
@@ -129,14 +113,15 @@ nmap <leader>p :set paste!<CR>
 
 nmap <leader>w :set wrap!<CR>
 
-nmap <leader>/ :let @/=""<CR>
+nmap <Space> :let @/=""<CR>
 
 inoremap <C-p> <C-r>*
 
-" =============================
-"             Unite
-" =============================
+nnoremap Y "aY
+nnoremap P "ap
 
+" Unite
+" -----------------------------
 let g:unite_source_history_yank_enable=1
 let g:unite_enable_start_insert=1
 let g:unite_split_rule="botright"
@@ -165,36 +150,30 @@ nnoremap <leader>g :Unite -no-start-insert -no-quit grep:.<cr>
 nnoremap <leader>G :UniteWithCursorWord -no-start-insert -no-quit grep:.<cr>
 nnoremap <leader>y :Unite -buffer-name=history -no-start-insert history/yank<cr>
 nnoremap <leader>f :Unite -buffer-name=file file_rec<cr>
-nnoremap <space> :Unite -buffer-name=buffer buffer<cr>
+nnoremap <leader>b :Unite -buffer-name=buffer buffer<cr>
 nnoremap <leader>l :Unite -buffer-name=search line<cr>
 nnoremap <Leader>m :Unite -buffer-name=recent -no-start-insert file_mru<cr>
 nnoremap <Leader>T :Unite -buffer-name=tags tag<cr>
 
-" =============================
-"              A
-" =============================
+" A
+" -----------------------------
 
 nnoremap <leader>h :A<cr>
 nnoremap <leader>H :AV<cr>
 
-" =============================
-"          IndentLine
-" =============================
+" IndentLine
+" -----------------------------
 
 let g:indentLine_color_tty = 235
 
-" =============================
-"            airline
-" =============================
-
+" airline
+" -----------------------------
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
-" =============================
-"            vimfiler
-" =============================
-
+" vimfiler
+" -----------------------------
 autocmd FileType vimfiler call s:vimfiler_my_settings()
 
 function! s:vimfiler_my_settings()
@@ -204,10 +183,8 @@ endfunction
 
 nnoremap <leader>n :VimFilerExplorer -winwidth=25<CR>
 
-" =============================
-"             YCM
-" =============================
-
+" YCM
+" -----------------------------
 let g:ycm_add_preview_to_completeopt = 0
 set completeopt-=preview
 let g:ycm_semantic_triggers = {'haskell' : ['.']}
@@ -215,10 +192,8 @@ setlocal omnifunc=necoghc#omnifunc
 
 nnoremap gd :YcmCompleter GoTo<CR>
 
-" =============================
-"          OTHER STUFF
-" =============================
-
+" OTHER STUFF
+" -----------------------------
 command! -nargs=* -bang Replace call Replace("<bang>", <f-args>)
 
 function! Replace (bang, pattern, replacement)
@@ -243,11 +218,6 @@ endfunction
 
 set tags=.tags,tags;
 map <F4> :! ctags -R -f .tags .
-
-map <F9> :wa \| silent make! -j2 \| redraw! \| cw<CR>
-map <S-F9> :wa \| execute '!' . g:cmakeprg<CR>
-map <F10> :execute 'silent !' . g:runprg \| redraw!<CR>
-map <F12> :wa \| execute '!' . g:runtestprg<CR>
 
 autocmd SessionLoadPost * call s:LoadLocalVimrc()
 
