@@ -7,29 +7,43 @@ call vundle#rc()
 " PLUGINS
 " -----------------------------
 Bundle 'gmarik/vundle'
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'Valloric/YouCompleteMe'
+Bundle 'scrooloose/nerdtree'
 Bundle 'tomtom/tcomment_vim'
-Bundle 'vim-scripts/a.vim'
-Bundle 'Shougo/vimproc.vim'
-Bundle 'Shougo/unite.vim'
-Bundle 'Shougo/neomru.vim'
-Bundle 'Shougo/vimfiler.vim'
 Bundle 'bling/vim-airline'
-Bundle 'osyo-manga/vim-over'
-Bundle 'eagletmt/ghcmod-vim'
+Bundle 'Valloric/YouCompleteMe'
+Bundle 'vim-scripts/a.vim'
 Bundle 'drmikehenry/vim-headerguard'
+Bundle 'nathanaelkane/vim-indent-guides'
+Bundle 'majutsushi/tagbar'
+Bundle 'justinmk/vim-syntax-extra'
+Bundle 'zah/nim.vim'
+Bundle 'ctrlpvim/ctrlp.vim'
+Bundle 'bkad/CamelCaseMotion'
+Bundle 'tomtom/checksyntax_vim'
+Bundle 'godlygeek/tabular'
+Bundle 'rking/ag.vim'
+Bundle 'mhinz/vim-signify'
+Bundle 'marijnh/tern_for_vim'
+Bundle 'Olical/vim-enmasse'
+
+Bundle 'altercation/vim-colors-solarized'
+Bundle 'yosiat/oceanic-next-vim'
+Bundle 'morhetz/gruvbox'
+Bundle 'nanotech/jellybeans.vim'
+Bundle 'zeis/vim-kolor'
 
 filetype plugin indent on
 
 " SETTINGS
 " -----------------------------
+set shell=/usr/bin/bash
+
 set mouse=a
 set mousehide
 
 set background=dark
 let g:solarized_termcolors=256
-colorscheme solarized
+colorscheme gruvbox
 
 set backspace=indent,eol,start
 
@@ -77,13 +91,6 @@ set autoread
 set number
 set clipboard=unnamedplus
 
-au BufNewFile,BufRead *.cl set filetype=c
-au BufNewFile,BufRead *.cu set filetype=cpp
-au BufNewFile,BufRead *.cuh set filetype=cpp
-
-au FileType c,cpp imap #i #include
-au FileType c,cpp imap #d #define
-
 " MAPPING
 " -----------------------------
 let mapleader=','
@@ -93,10 +100,10 @@ nmap <C-k> <C-W>k
 nmap <C-l> <C-W>l
 nmap <C-h> <C-W>h
 
-map <Right> <C-w><
-map <Up> <C-W>-
-map <Down> <C-W>+
-map <Left> <C-w>>
+" map <Right> <C-w><
+" map <Up> <C-W>-
+" map <Down> <C-W>+
+" map <Left> <C-w>>
 
 nnoremap ; :
 
@@ -105,66 +112,33 @@ inoremap kj <esc>
 
 nnoremap U <C-r>
 
-nmap <leader>, :b#<CR>
-
-nmap <leader>e :set number!<CR>
-
-nmap <leader>p :set paste!<CR>
-
-nmap <leader>w :set wrap!<CR>
+nnoremap <leader>, :b#<CR>
+nnoremap <leader>l :ls<CR>
+nnoremap <leader>b :bp<CR>
+nnoremap <leader>f :bn<CR>
 
 nmap <Space> :let @/=""<CR>
 
-inoremap <C-p> <C-r>*
+" inoremap <C-p> <C-r>*
 
-nnoremap Y "aY
-nnoremap P "ap
+" nnoremap Y "aY
+" nnoremap P "ap
 
-" Unite
-" -----------------------------
-let g:unite_source_history_yank_enable=1
-let g:unite_enable_start_insert=1
-let g:unite_split_rule="botright"
-let g:unite_winheight=10
-let g:unite_candidate_icon="▷"
-let g:unite_force_overwrite_statusline=0
-let g:unite_prompt = '>>> '
-let g:unite_marked_icon = '✓'
+" insert one char
+map <C-i> i_<Esc>r
 
-if executable('ack')
-  let g:unite_source_grep_command = 'ack'
-  let g:unite_source_grep_default_opts = '--noheading --nocolor --nocolumn --smart-case -k -H'
-  let g:unite_source_grep_recursive_opt = ''
-endif
+nmap 0 ^
 
-call unite#filters#matcher_default#use(['matcher_fuzzy'])
-call unite#filters#sorter_default#use(['sorter_rank'])
-call unite#custom#source('file_rec/async,file_rec','ignore_pattern','tags')
-
-autocmd FileType unite call s:unite_my_settings()
-function! s:unite_my_settings()
-    imap <buffer> <TAB> <Plug>(unite_select_next_line)
-endfunction
-
-nnoremap <leader>g :Unite -no-start-insert -no-quit grep:.<cr>
-nnoremap <leader>G :UniteWithCursorWord -no-start-insert -no-quit grep:.<cr>
-nnoremap <leader>y :Unite -buffer-name=history -no-start-insert history/yank<cr>
-nnoremap <leader>f :Unite -buffer-name=file file_rec<cr>
-nnoremap <leader>b :Unite -buffer-name=buffer buffer<cr>
-nnoremap <leader>l :Unite -buffer-name=search line<cr>
-nnoremap <Leader>m :Unite -buffer-name=recent -no-start-insert file_mru<cr>
-nnoremap <Leader>T :Unite -buffer-name=tags tag<cr>
+nmap <F2> :set wrap!<CR>
+nmap <F3> :set number!<CR>
+nmap <F4> :set paste!<CR>
+nmap <F5> :e $MYVIMRC<CR>
+nmap <S-F5> :source $MYVIMRC<CR>
 
 " A
 " -----------------------------
-
 nnoremap <leader>h :A<cr>
 nnoremap <leader>H :AV<cr>
-
-" IndentLine
-" -----------------------------
-
-let g:indentLine_color_tty = 235
 
 " airline
 " -----------------------------
@@ -172,52 +146,60 @@ let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#left_sep = ' '
 let g:airline#extensions#tabline#left_alt_sep = '|'
 
-" vimfiler
+" NERDTree
 " -----------------------------
-autocmd FileType vimfiler call s:vimfiler_my_settings()
-
-function! s:vimfiler_my_settings()
-    unmap <buffer> <C-l>
-    unmap <buffer> <C-j>
-endfunction
-
-nnoremap <leader>n :VimFilerExplorer -winwidth=25<CR>
+nnoremap <leader>n :NERDTreeToggle<CR>
 
 " YCM
 " -----------------------------
 let g:ycm_add_preview_to_completeopt = 0
 set completeopt-=preview
-let g:ycm_semantic_triggers = {'haskell' : ['.']}
-setlocal omnifunc=necoghc#omnifunc
+let g:ycm_min_num_of_chars_for_completion = 1
+let g:ycm_confirm_extra_conf = 0
 
+" manual YCM activation
+" YCM auto loading must be disabled by removing autocmd command from the YCM
+" sources
+command! YCM call youcompleteme#Enable()
 nnoremap gd :YcmCompleter GoTo<CR>
+
+if filereadable('.ycm_extra_conf.py')
+    autocmd VimEnter * call youcompleteme#Enable()
+endif
+
+" Tagbar
+" -----------------------------
+nnoremap <leader>T :TagbarToggle<CR>
+nnoremap <leader>t :TagbarOpenAutoClose<CR>
+
+" Indent Guides
+" -----------------------------
+let g:indent_guides_enable_on_vim_startup = 0
+
+" CtrlP
+" -----------------------------
+let g:ctrlp_user_command = [
+            \ '.git/',
+            \ 'git --git-dir=%s/.git ls-files -oc --exclude-standard'
+            \ ]
+
+nnoremap <leader>/ :CtrlPBufTagAll<CR>
+nnoremap <leader>m :CtrlPMRUFiles<CR>
+
+" CheckSyntax
+" -----------------------------
+map <F8> :up <bar> :CheckSyntax<CR>
+imap <F8> <ESC>:up <bar> :CheckSyntax<CR>
 
 " OTHER STUFF
 " -----------------------------
-command! -nargs=* -bang Replace call Replace("<bang>", <f-args>)
+au BufNewFile,BufRead *.cl set filetype=c
+au BufNewFile,BufRead *.cu set filetype=cpp
+au BufNewFile,BufRead *.cuh set filetype=cpp
+au FileType c,cpp imap #i #include
 
-function! Replace (bang, pattern, replacement)
-    let inplace = a:bang == '!'
-
-    if a:pattern == '' || a:replacement == ''
-        return
-    endif
-
-    if !inplace
-        let sed = 'sed s/\\b'.a:pattern.'\\b/'.a:replacement.'/g'
-        let ack = 'ack -k -w --group --nocolor '.a:pattern
-        cexpr system(sed, system(ack))
-        copen
-        execute 'match Search /'.a:replacement.'/'
-    else
-        exe '!ack -l -k -w --print0 '.a:pattern.
-                    \' | xargs -0 -n 1 '.
-                    \'sed -i "s/\b'.a:pattern.'\b/'.a:replacement.'/g"'
-    endif
-endfunction
-
-set tags=.tags,tags;
-map <F4> :! ctags -R -f .tags .
+" set tags=.tags,tags;
+" map <F5> :! ctags -R -f .tags .
 
 autocmd SessionLoadPost * call s:LoadLocalVimrc()
 
@@ -229,3 +211,11 @@ endfunction
 
 call s:LoadLocalVimrc()
 
+if exists("*Run")
+    map <F9> :up <bar> call Run()<CR><CR>
+    imap <F9> <ESC>:up <bar> call Run()<CR><CR>
+    map <S-F9> :up <bar> call Run()<CR>
+endif
+
+" :W saves using sudo
+command! W w !sudo tee % > /dev/null

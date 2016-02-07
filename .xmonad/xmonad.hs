@@ -12,6 +12,8 @@ myWorkspaces = ["1:term", "2:web", "3:code", "4:chat"] ++ map show [5..9]
 
 myManageHook = composeAll
     [ className =? "Pidgin" --> doShift "4:chat"
+    , className =? "mplayer" --> doFloat
+    , className =? "mpv" --> doFloat
     , resource  =? "desktop_window" --> doIgnore
     , isFullscreen --> doFullFloat]
 

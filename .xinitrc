@@ -26,6 +26,8 @@ xset -dpms;xset s off
 
 unclutter -grab &
 
+feh --bg-fill ~/dotfiles/DSC_0553.JPG &
+
 #exec dbus-launch --sh-syntax --exit-with-session
 exec pidgin&
 exec xmonad

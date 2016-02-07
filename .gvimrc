@@ -1,6 +1,6 @@
 set guifont=Inconsolata\ 13
 
-set mousehide		" Hide the mouse when typing text
+set mousehide
 
 set guioptions-=m
 set guioptions-=T
