@@ -12,7 +12,7 @@ export PATH=$PATH:~/.cabal/bin
 export PATH=$PATH:/opt/cuda/bin
 export GLPATH=/usr/lib
 export TERM=xterm-256color
-export EDITOR=vim
+export EDITOR=nvim
 
 xsetroot -cursor_name left_ptr
 

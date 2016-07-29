@@ -1,37 +1,45 @@
 set nocompatible
 syntax on
 filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim/
+call vundle#begin()
 
 " PLUGINS
 " -----------------------------
-Bundle 'gmarik/vundle'
-Bundle 'scrooloose/nerdtree'
-Bundle 'tomtom/tcomment_vim'
-Bundle 'bling/vim-airline'
-Bundle 'Valloric/YouCompleteMe'
-Bundle 'vim-scripts/a.vim'
-Bundle 'drmikehenry/vim-headerguard'
-Bundle 'nathanaelkane/vim-indent-guides'
-Bundle 'majutsushi/tagbar'
-Bundle 'justinmk/vim-syntax-extra'
-Bundle 'zah/nim.vim'
-Bundle 'ctrlpvim/ctrlp.vim'
-Bundle 'bkad/CamelCaseMotion'
-Bundle 'tomtom/checksyntax_vim'
-Bundle 'godlygeek/tabular'
-Bundle 'rking/ag.vim'
-Bundle 'mhinz/vim-signify'
-Bundle 'marijnh/tern_for_vim'
-Bundle 'Olical/vim-enmasse'
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'bling/vim-airline'
+Plugin 'Shougo/deoplete.nvim'
+Plugin 'Shougo/neoinclude.vim'
+Plugin 'Rip-Rip/clang_complete'
+Plugin 'vim-scripts/a.vim'
+Plugin 'drmikehenry/vim-headerguard'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'majutsushi/tagbar'
+Plugin 'justinmk/vim-syntax-extra'
+Plugin 'zah/nim.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'bkad/CamelCaseMotion'
+Plugin 'tomtom/checksyntax_vim'
+Plugin 'godlygeek/tabular'
+Plugin 'rking/ag.vim'
+Plugin 'mhinz/vim-signify'
+Plugin 'marijnh/tern_for_vim'
+Plugin 'Olical/vim-enmasse'
+Plugin 'rust-lang/rust.vim'
+Plugin 'racer-rust/vim-racer'
+Plugin 'svermeulen/vim-easyclip'
+Plugin 'tpope/vim-repeat'
+Plugin 'keith/swift.vim'
 
-Bundle 'altercation/vim-colors-solarized'
-Bundle 'yosiat/oceanic-next-vim'
-Bundle 'morhetz/gruvbox'
-Bundle 'nanotech/jellybeans.vim'
-Bundle 'zeis/vim-kolor'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'yosiat/oceanic-next-vim'
+Plugin 'morhetz/gruvbox'
+Plugin 'nanotech/jellybeans.vim'
+Plugin 'zeis/vim-kolor'
 
+call vundle#end()
 filetype plugin indent on
 
 " SETTINGS
@@ -64,7 +72,7 @@ set colorcolumn=81
 set noshowmatch
 set showcmd
 
-set encoding=utf-8
+" set encoding=utf-8
 set t_Co=256
 
 set hlsearch
@@ -90,6 +98,10 @@ set ls=2
 set autoread
 set number
 set clipboard=unnamedplus
+set completeopt-=preview
+set hidden
+set undofile
+set undodir=~/.vim/.undo
 
 " MAPPING
 " -----------------------------
@@ -100,11 +112,6 @@ nmap <C-k> <C-W>k
 nmap <C-l> <C-W>l
 nmap <C-h> <C-W>h
 
-" map <Right> <C-w><
-" map <Up> <C-W>-
-" map <Down> <C-W>+
-" map <Left> <C-w>>
-
 nnoremap ; :
 
 inoremap jk <esc>
@@ -113,27 +120,41 @@ inoremap kj <esc>
 nnoremap U <C-r>
 
 nnoremap <leader>, :b#<CR>
-nnoremap <leader>l :ls<CR>
 nnoremap <leader>b :bp<CR>
 nnoremap <leader>f :bn<CR>
 
 nmap <Space> :let @/=""<CR>
 
-" inoremap <C-p> <C-r>*
-
-" nnoremap Y "aY
-" nnoremap P "ap
-
 " insert one char
 map <C-i> i_<Esc>r
 
-nmap 0 ^
+nnoremap H ^
+nnoremap L $
 
 nmap <F2> :set wrap!<CR>
 nmap <F3> :set number!<CR>
 nmap <F4> :set paste!<CR>
 nmap <F5> :e $MYVIMRC<CR>
 nmap <S-F5> :source $MYVIMRC<CR>
+
+nnoremap <leader>Q :q<CR>
+nnoremap <leader>q :bd<CR>
+
+" Use Q for formatting the current paragraph (or visual selection)
+vnoremap Q gq
+nnoremap Q gqap
+
+nnoremap <Tab> %
+vnoremap <Tab> %
+
+" Quote words under cursor
+nnoremap <leader>" viW<esc>a"<esc>gvo<esc>i"<esc>gvo<esc>3l
+nnoremap <leader>' viW<esc>a'<esc>gvo<esc>i'<esc>gvo<esc>3l
+
+" Quote current selection
+" TODO: This only works for selections that are created "forwardly"
+vnoremap <leader>" <esc>a"<esc>gvo<esc>i"<esc>gvo<esc>ll
+vnoremap <leader>' <esc>a'<esc>gvo<esc>i'<esc>gvo<esc>ll
 
 " A
 " -----------------------------
@@ -150,22 +171,15 @@ let g:airline#extensions#tabline#left_alt_sep = '|'
 " -----------------------------
 nnoremap <leader>n :NERDTreeToggle<CR>
 
-" YCM
+" deoplete
 " -----------------------------
-let g:ycm_add_preview_to_completeopt = 0
-set completeopt-=preview
-let g:ycm_min_num_of_chars_for_completion = 1
-let g:ycm_confirm_extra_conf = 0
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
 
-" manual YCM activation
-" YCM auto loading must be disabled by removing autocmd command from the YCM
-" sources
-command! YCM call youcompleteme#Enable()
-nnoremap gd :YcmCompleter GoTo<CR>
+let g:racer_cmd = "/usr/bin/racer"
+let $RUST_SRC_PATH = "/usr/src/rust/src/"
 
-if filereadable('.ycm_extra_conf.py')
-    autocmd VimEnter * call youcompleteme#Enable()
-endif
+let g:clang_library_path = "/usr/lib/libclang.so"
 
 " Tagbar
 " -----------------------------
@@ -193,13 +207,15 @@ imap <F8> <ESC>:up <bar> :CheckSyntax<CR>
 
 " OTHER STUFF
 " -----------------------------
+nnoremap <Leader>r :%s/\<<C-r><C-w>\>//gI<Left><Left><Left>
+nnoremap <Leader>R :%s/\<<C-r><C-w>\>//gIc<Left><Left><Left><Left>
+vnoremap <Leader>r "hy:%s/<C-r>h//gI<left><left><left>
+vnoremap <Leader>R "hy:%s/<C-r>h//gIc<left><left><left><left>
+
 au BufNewFile,BufRead *.cl set filetype=c
 au BufNewFile,BufRead *.cu set filetype=cpp
 au BufNewFile,BufRead *.cuh set filetype=cpp
 au FileType c,cpp imap #i #include
-
-" set tags=.tags,tags;
-" map <F5> :! ctags -R -f .tags .
 
 autocmd SessionLoadPost * call s:LoadLocalVimrc()
 
@@ -212,10 +228,12 @@ endfunction
 call s:LoadLocalVimrc()
 
 if exists("*Run")
-    map <F9> :up <bar> call Run()<CR><CR>
-    imap <F9> <ESC>:up <bar> call Run()<CR><CR>
+    map <F9> :up <bar> call Run()<CR>
+    imap <F9> <ESC>:up <bar> call Run()<CR>
     map <S-F9> :up <bar> call Run()<CR>
 endif
 
-" :W saves using sudo
-command! W w !sudo tee % > /dev/null
+if exists("*RunTests")
+    map <F10> :up <bar> call RunTests()<CR>
+    imap <F10> <ESC>:up <bar> call RunTests()<CR>
+endif
