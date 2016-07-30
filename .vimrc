@@ -65,9 +65,7 @@ set smartindent
 set cindent
 
 set nowrap
-set linebreak
-set textwidth=80
-set colorcolumn=81
+set colorcolumn=120
 
 set noshowmatch
 set showcmd
@@ -88,7 +86,6 @@ set listchars=tab:▸\ ,extends:❯,precedes:❮,nbsp:␣
 set so=7
 
 set ruler
-set colorcolumn=80
 set virtualedit=onemore
 set cursorline
 set fillchars+=vert:│
